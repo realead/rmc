@@ -1,7 +1,7 @@
 RMC="python2.7 ../../src/rmc.py"
 
 $RMC "-c" "dummy.rm" "-o" "dummy"
-./dummy
+./dummy 42
 
 test_result=$?
 

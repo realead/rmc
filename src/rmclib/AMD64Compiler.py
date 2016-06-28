@@ -70,7 +70,27 @@ class AMD64Compiler:
     def emit_main(self):
         inner_code=AssemblerCode()   
         #no errors -> result is 42
-        inner_code.append_tabbed_line('movl\t$42, %eax')   
+        inner_code.append_tabbed_line('movl\t$42, %eax')
+        inner_code.append_comment('we use 12 bytes on the stack, rsp must be multiple of 16')    
+        inner_code.append_tabbed_line('subq\t$16, %rsp')
+        
+        inner_code.append_comment('remember the number of arguments (int)') 
+        inner_code.append_tabbed_line('movl\t%edi, -4(%rbp)')
+        inner_code.append_comment('remember the arguments')   
+        inner_code.append_tabbed_line('movq\t%rsi, -16(%rbp)')
+        
+        inner_code.append_comment('put the value of the argv[1] into rdi - first argument of c2i')  
+        inner_code.append_tabbed_line('movq\t-16(%rbp), %rax')
+        inner_code.append_tabbed_line('addq\t$8, %rax')
+        inner_code.append_tabbed_line('movq\t(%rax), %rax')
+        inner_code.append_tabbed_line('movq\t%rax, %rdi')
+              
+        inner_code.append_comment('call c2i') 
+        inner_code.append_tabbed_line('call\tc2i')
+        
+        inner_code.append_comment('free the frame') 
+        inner_code.append_tabbed_line('movq\t%rbp, %rsp')
+           
         self.register_global_function("main", inner_code)
         
         
