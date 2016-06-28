@@ -4,8 +4,13 @@ $RMC "-c" "dummy.rm" "-o" "dummy"
 ./dummy
 
 test_result=$?
-rm *.s
-rm dummy
+
+#with option --keep?
+if [ "$1" != "--keep" ]; then
+    rm *.s
+    rm dummy
+fi
+
 
 if [ $test_result = 42 ]; then
     echo "OK"
