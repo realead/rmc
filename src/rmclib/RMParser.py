@@ -8,6 +8,7 @@ class RMParser:
     def compile_file(self, compiler):
         self.compiler=compiler
         self.compiler.parser=self
+        self.compiler.register_global_function("i2c", self.compiler.c2i_assembler_function())
         self.compiler.emit_main()
         self.compiler.close_output()#make sure the file is flushed
  
