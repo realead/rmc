@@ -39,9 +39,9 @@ class AMD64Compiler:
         code.append_tabbed_line('.cfi_startproc')
         code.append_tabbed_line('pushq\t%rbp')
         code.append_tabbed_line('.cfi_def_cfa_offset 16')
-        code.append_tabbed_line('.cfi_offset 6, -16\n')
-        code.append_tabbed_line('movq\t%rsp, %rbp\n')
-        code.append_tabbed_line('.cfi_def_cfa_register 6\n')
+        code.append_tabbed_line('.cfi_offset 6, -16')
+        code.append_tabbed_line('movq\t%rsp, %rbp')
+        code.append_tabbed_line('.cfi_def_cfa_register 6')
 	    
 	    #error if something wrong
         code.append_tabbed_line('movl\t$1, %eax')
