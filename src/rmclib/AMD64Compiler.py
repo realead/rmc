@@ -43,15 +43,14 @@ class AMD64Compiler:
         code.append_tabbed_line('movq\t%rsp, %rbp')
         code.append_tabbed_line('.cfi_def_cfa_register 6')
 	    
-	    #error if something wrong
-        code.append_tabbed_line('movl\t$1, %eax')
-	    
+	    #flush to the file:
+        self.write_assembler_code(code)
+        
 	    #code of the function	
         self.parser.parse(fun_body)
-        
-        #no errors
-        code.append_tabbed_line('movl\t$42, %eax')
-        
+      
+      
+        code=AssemblerCode()
         #cleaning up
         code.append_tabbed_line('popq\t%rbp')
         code.append_tabbed_line('.cfi_def_cfa 7, 8')
@@ -64,12 +63,24 @@ class AMD64Compiler:
         
         #flush to the file:
         self.write_assembler_code(code)
+       
+       
+       
             
-    def emit_main(self, inner_code):
+    def emit_main(self):
+        inner_code=AssemblerCode()   
+        #no errors -> result is 42
+        inner_code.append_tabbed_line('movl\t$42, %eax')   
         self.register_global_function("main", inner_code)
+        
+        
+        
         
     def close_output(self):
         self.out.close()
+        
+        
+        
         
         
     def c2i_assembler_function(self):

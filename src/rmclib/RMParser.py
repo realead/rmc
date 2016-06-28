@@ -1,3 +1,5 @@
+from ascode import AssemblerCode
+
 class RMParser:
     def __init__(self, input_file):
         with open(input_file,'r') as cin:
@@ -6,8 +8,11 @@ class RMParser:
     def compile_file(self, compiler):
         self.compiler=compiler
         self.compiler.parser=self
-        self.compiler.emit_main(self.lines)
+        self.compiler.emit_main()
         self.compiler.close_output()#make sure the file is flushed
  
     def parse(self, code):
-        pass      
+        if isinstance(code, AssemblerCode):
+            self.compiler.write_assembler_code(code)
+        else:
+            pass     
