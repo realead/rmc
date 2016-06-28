@@ -12,6 +12,9 @@ class AssemblerCode:
         
     def extend_code(self, assembler_lines):
         self.code.extend(assembler_lines.code)
+    
+    def append_comment(self, comment):
+        self.append_code_line('/*'+comment+'*/')
             
     def write_to_file(self, f):
         f.writelines(self.code)
