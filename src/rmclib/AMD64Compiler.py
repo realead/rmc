@@ -70,5 +70,35 @@ class AMD64Compiler:
         
     def close_output(self):
         self.out.close()
+        
+        
+    def c2i_assembler_function(self):
+        code=AssemblerCode()
+        
+        code.append_tabbed_line('movq\t%rdi, -24(%rbp)')
+        code.append_tabbed_line('movl\t$0, -4(%rbp)')
+        code.append_tabbed_line('jmp\t.L2')
+        code.append_code_line('.L3:')
+        code.append_tabbed_line('movl\t-4(%rbp), %edx')
+        code.append_tabbed_line('movl\t%edx, %eax')
+        code.append_tabbed_line('sall\t$2, %eax')
+        code.append_tabbed_line('addl\t%edx, %eax')
+        code.append_tabbed_line('addl\t%eax, %eax')
+        code.append_tabbed_line('movl\t%eax, %edx')
+        code.append_tabbed_line('movq\t-24(%rbp), %rax')
+        code.append_tabbed_line('movzbl\t(%rax), %eax')
+        code.append_tabbed_line('movsbl\t%al, %eax')
+        code.append_tabbed_line('subl\t$48, %eax')
+        code.append_tabbed_line('addl\t%edx, %eax')
+        code.append_tabbed_line('movl\t%eax, -4(%rbp)')
+        code.append_tabbed_line('addq\t$1, -24(%rbp)')
+        code.append_code_line('.L2:')
+        code.append_tabbed_line('movq\t-24(%rbp), %rax')
+        code.append_tabbed_line('movzbl\t(%rax), %eax')
+        code.append_tabbed_line('testb\t%al, %al')
+        code.append_tabbed_line('jne\t.L3')
+        code.append_tabbed_line('movl\t-4(%rbp), %eax')
+        
+        return code
 
 	
