@@ -35,6 +35,9 @@ check_prog_output(){
 
 # here are the test cases:
 check_prog_output "5" "0"
+check_prog_output "1 1" "1"
+check_prog_output "23 0 2222" "0"
+check_prog_output "2 3333333" "3333333"
 
 ############# CLEAN UP ######################################
 
@@ -45,6 +48,12 @@ if [ "$1" != "--keep" ]; then
 fi
 
 ############ return the number of failed test cases 
+if [ $failed_cnt = "0" ]; then
+    echo "Ok"
+else
+    echo "$failed_cnt  wrong example(s)"
+fi
+
 exit $failed_cnt
 
 
