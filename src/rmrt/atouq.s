@@ -13,6 +13,7 @@
 
 
 .section .text
+    .equ ERROR_WRONG_CHAR, 2
     .globl atouq
     .type atouq, @function
     
@@ -24,7 +25,24 @@ start_loop:
     movb (%rdi), %bl
     cmpb $0, %bl
     je loop_exit
+
+test_ge_0: 
+    cmpb $'0', %bl
+    jge test_le_9
     
+    #error ch<'0':
+    movq $ERROR_WRONG_CHAR, %rdi
+    call error_exit
+
+test_le_9:
+    cmpb  $'9', %bl
+    jle digit
+    
+    #error ch>'9':
+    movq $ERROR_WRONG_CHAR, %rdi
+    call error_exit 
+       
+digit:   
     imulq $10, %rax
     subb $'0', %bl
     movzbq %bl, %rcx
