@@ -11,9 +11,9 @@
 #%rax -> the resulting number
 #
 
+.include "error_codes.h"
 
 .section .text
-    .equ ERROR_WRONG_CHAR, 2
     .globl atouq
     .type atouq, @function
     
