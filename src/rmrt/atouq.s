@@ -44,14 +44,26 @@ test_le_9:
        
 digit:   
     imulq $10, %rax
+    
+    #check for overflow
+    jo error_overflow
+ 
+  mult_ok:    
     subb $'0', %bl
     movzbq %bl, %rcx
-    add %rbx, %rax
+    add %rbx, %rax 
+    
+    #check for overflow
+    jc error_overflow 
+        
+  add_ok:
     incq %rdi
     jmp start_loop
-    
-    
+        
 loop_exit:
     retq
     
-    
+error_overflow:
+    movq $ERROR_OVERFLOW, %rdi
+    call error_exit #kill program  
+      
