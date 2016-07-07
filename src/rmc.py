@@ -33,7 +33,13 @@ from rmclib.AMD64Compiler import AMD64Compiler as Compiler
 parser=Parser(args.c)
 compiler=Compiler(asm_file, input_name, parser)
 
-parser.compile_file(compiler)
+
+from rmclib.rmcerrors import RMCError 
+try:
+    parser.compile_file(compiler)
+except RMCError as e:
+    print >> sys.stderr, "error compiling "+args.c+":", e
+    exit(1)
 
 
 

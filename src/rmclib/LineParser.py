@@ -11,8 +11,11 @@
 #
 
 import AMD64Mnemonics
+from rmcerrors import RMCError 
 
-
+class LineParserException(Exception):
+    pass
+    
 class LineParser:
     def __init__(self, line):
         parts=line.split()
@@ -37,3 +40,5 @@ class LineParser:
         if self.operation=="LOAD":
            return AMD64Mnemonics.Operation2("movq", self.get_operand(), AMD64Mnemonics.Accumulator())
            
+        raise RMCError("unknown instruction "+self.operation);   
+        
