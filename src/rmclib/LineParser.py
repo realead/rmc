@@ -32,3 +32,8 @@ class LineParser:
     def get_instruction(self):
         if self.operation=="STORE":
            return AMD64Mnemonics.Operation2("movq", AMD64Mnemonics.Accumulator(), self.get_operand())
+           
+       
+        if self.operation=="LOAD":
+           return AMD64Mnemonics.Operation2("movq", self.get_operand(), AMD64Mnemonics.Accumulator())
+           
