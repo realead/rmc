@@ -20,7 +20,7 @@
 atouq:
 
     movq $0, %rax
-    
+    movq $10 , %r8 #our base!
 start_loop:
     movb (%rdi), %bl
     cmpb $0, %bl
@@ -43,7 +43,7 @@ test_le_9:
     call error_exit 
        
 digit:   
-    imulq $10, %rax
+    mul %r8 #implicitely multiplies rax
     
     #check for overflow
     jo error_overflow
