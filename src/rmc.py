@@ -1,3 +1,12 @@
+##finding path to run_time
+
+import sys
+import os
+
+path_to_rt=os.path.join(os.path.dirname(sys.argv[0]), "rmrt")
+
+
+
 import argparse
 
 parser = argparse.ArgumentParser(description='Register Machine Compiler')
@@ -8,12 +17,14 @@ parser.add_argument('-o', type=str,
                     
 args = parser.parse_args()
 
-import os
 
 input_name=os.path.basename(args.c)
 path, ext=os.path.splitext(args.c)
 asm_file=path+".s"
+obj_file=path+".o"
 
+
+#compile rmprogram
 from rmclib.RMParser import RMParser as Parser
 from rmclib.AMD64Compiler import AMD64Compiler as Compiler
 
@@ -22,11 +33,29 @@ compiler=Compiler(asm_file, input_name, parser)
 
 parser.compile_file(compiler)
 
-#start  gcc:
-import subprocess
-command=['gcc', asm_file,'-o', args.o]
-subprocess.call(command)
 
-#print"result:", subprocess.check_output(command, stderr=subprocess.STDOUT)
+
+#assembly runtime:
+command_list=[];
+rt_files=["atouq", "error_exit", "print_newline", "startup", "uqtoa"]
+for rt_file in rt_files:
+    command_list.append(['as', "-I"+path_to_rt, os.path.join(path_to_rt, rt_file)+".s", '-o', rt_file+".o"])
+    
+
+
+#assembly rmprog
+command_list.append(['as', asm_file, '-o', obj_file])
+
+#link everything
+command_list.append(['ld', '-o', args.o, obj_file]+[f+'.o' for f in rt_files])
+
+
+#invoke the program:
+import subprocess
+for command in command_list:
+   print "calling:", ' '.join(command)
+   subprocess.call(command)
+
+  
 
  
