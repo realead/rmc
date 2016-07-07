@@ -23,6 +23,10 @@
 .include "linux64.h"
 .include "error_codes.h"
 
+.section .data
+    .globl REGS
+REGS:    
+    .quad 0
 .section .bss
     .equ BUFFER_SIZE, 500
     .lcomm OUTPUT_BUFFER, BUFFER_SIZE
@@ -85,9 +89,12 @@ ini_loop:
     
     subq $QUAD_SIZE, %rcx
     jmp ini_loop
+   
     
 #everything set up, start the program
 start_program:
+    #remember the start  of registers
+    movq %rsp, REGS
     call rmprogram
     
 #print out result:
