@@ -25,7 +25,7 @@ class RMParser:
                 parsed_line.check_b(expected_b)
                 parsed_line.add_to_end_list(lines_of_end)
                     
-                mnemonics=parsed_line.get_instruction().as_mnemonic()
+                mnemonics=parsed_line.as_AMD64Mnemonics()
                 for mnemonic in mnemonics:
                     if mnemonic:
                         asm_code.append_tabbed_line(mnemonic)

@@ -15,7 +15,7 @@ only_compile "wrong_b_start"        "expected b is 1, found b is 2"
 only_compile "end/empty"            "exact one END instruction expected, but 0 found"
 only_compile "end/no_end"           "exact one END instruction expected, but 0 found"
 only_compile "end/two_ends"         "exact one END instruction expected, but 2 found"
-only_compile "end/operand_for_end"  "no operand for END expected, but found 34"
+only_compile "end/operand_for_end"  "END does not expect operands but 1 found"
 
 ########### CLEAN UP #################################################
 
