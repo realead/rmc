@@ -95,7 +95,19 @@ class Add:
         res.extend(self.operand.prepare_AMD64Mnemonics())
         res.append("addq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
         return res   
+
         
+class Mult:
+    def __init__(self, operands):
+        if len(operands)!=1:
+           raise RMCError("MULT expects exact 1 operand but {0} found".format(len(operands)))
+        self.operand=createOperand(operands[0])
+             
+    def as_AMD64Mnemonics(self):
+        res=[]
+        res.extend(self.operand.prepare_AMD64Mnemonics())
+        res.append("imulq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
+        return res         
                 
 #operation factory        
 def createOperation(tokens):
@@ -110,6 +122,8 @@ def createOperation(tokens):
     if operation == "LOAD":
         return Load(operands) 
     if operation == "ADD":
-        return Add(operands)   
+        return Add(operands) 
+    if operation == "MULT":
+        return Mult(operands)   
         
     raise RMCError("unknown instruction "+operation);             
