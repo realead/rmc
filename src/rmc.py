@@ -14,7 +14,9 @@ parser.add_argument('-c', type=str,
                     help='file name of the file to compile')
 parser.add_argument('-o', type=str, 
                     help='file name of the resulting program')
-                    
+parser.add_argument('-v', 
+                    help='verbosity flag')
+                                        
 args = parser.parse_args()
 
 
@@ -53,8 +55,9 @@ command_list.append(['ld', '-o', args.o, obj_file]+[f+'.o' for f in rt_files])
 #invoke the program:
 import subprocess
 for command in command_list:
-   print "calling:", ' '.join(command)
-   subprocess.call(command)
+    if args.v:
+        print "calling:", ' '.join(command)
+    subprocess.call(command)
 
   
 
