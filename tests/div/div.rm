@@ -1,0 +1,6 @@
+1 LOAD #120
+2 DIV #5
+3 DIV 0
+4 DIV *1
+5 STORE 0
+6 END

@@ -133,6 +133,22 @@ class Sub:
         res.append("subq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
         res.append(label_end+":")
         return res   
+
+
+class Div:
+    def __init__(self, operands):
+        if len(operands)!=1:
+           raise RMCError("DIV expects exact 1 operand but {0} found".format(len(operands)))
+        self.operand=createOperand(operands[0])
+             
+    def as_AMD64Mnemonics(self):
+        res=[]
+        res.extend(self.operand.prepare_AMD64Mnemonics())
+        res.append("movq\t"+self.operand.as_AMD64Mnemonics()+", %rbx")
+        res.append("xorl\t %edx, %edx")#edx must be 0
+        res.append("divq\t%rbx")#rax<-rax/rbx
+        return res  
+
                 
 #operation factory        
 def createOperation(tokens):
@@ -151,6 +167,8 @@ def createOperation(tokens):
     if operation == "MULT":
         return Mult(operands) 
     if operation == "SUB":
-        return Sub(operands)   
+        return Sub(operands) 
+    if operation == "DIV":
+        return Div(operands)   
         
     raise RMCError("unknown instruction "+operation);             

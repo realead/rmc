@@ -48,6 +48,9 @@ only_compile "MULT/two_operands"               "MULT expects exact 1 operand but
 only_compile "SUB/no_operands"                "SUB expects exact 1 operand but 0 found"
 only_compile "SUB/two_operands"               "SUB expects exact 1 operand but 2 found"
 
+only_compile "DIV/no_operands"                "DIV expects exact 1 operand but 0 found"
+only_compile "DIV/two_operands"               "DIV expects exact 1 operand but 2 found"
+
 ########### CLEAN UP #################################################
 
 if [ "$1" != "--keep" ]; then
