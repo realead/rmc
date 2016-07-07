@@ -40,7 +40,10 @@ class Operation2:
         res.append(self.oper_mnem+"\t"+self.first.as_mnemonic()+", "+self.second.as_mnemonic())
         return res
         
-         
+class End:
+    def as_mnemonic(self):
+        return []
+                 
 #registers are pointed to by REGS pointer      
 class Register:
     def __init__(self, index):
