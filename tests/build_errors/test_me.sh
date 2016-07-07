@@ -39,6 +39,9 @@ only_compile "STORE/two_operands"               "STORE expects exact 1 operand b
 only_compile "LOAD/no_operands"                "LOAD expects exact 1 operand but 0 found"
 only_compile "LOAD/two_operands"               "LOAD expects exact 1 operand but 2 found"
 
+only_compile "ADD/no_operands"                "ADD expects exact 1 operand but 0 found"
+only_compile "ADD/two_operands"               "ADD expects exact 1 operand but 2 found"
+
 ########### CLEAN UP #################################################
 
 if [ "$1" != "--keep" ]; then
