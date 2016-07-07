@@ -11,8 +11,8 @@
 #
 
 import RMMnemonics as rms
+import rmcerrors
 from rmcerrors import RMCError 
-
 
 
     
@@ -30,11 +30,7 @@ class LineParser:
         
           
     def parse_b(self, b_literal):
-        if not b_literal.isdigit():
-            raise RMCError("b must be a positive integer, found "+b_literal)
-        self.b=int(b_literal)
-        if not self.b:
-            raise RMCError("b must be a positive integer, found "+b_literal) 
+        self.b=rmcerrors.asNonnegInt(b_literal, must_be_positive=True, lit_name="b")
             
     def check_b(self, expected_b):
         if expected_b!=self.b:
