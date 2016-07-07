@@ -45,6 +45,7 @@ class AMD64Compiler:
         self.parser.parse(fun_body)
 
         code=AssemblerCode()
+        code.append_code_line('end_program:')
         code.append_tabbed_line('ret')
         
         #flush to the file:

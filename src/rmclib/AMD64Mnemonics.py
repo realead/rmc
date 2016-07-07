@@ -42,7 +42,7 @@ class Operation2:
         
 class End:
     def as_mnemonic(self):
-        return []
+        return ["jmp end_program"]
                  
 #registers are pointed to by REGS pointer      
 class Register:
