@@ -17,11 +17,15 @@ class RMParser:
             self.compiler.write_assembler_code(code)
         else:
             asm_code=AssemblerCode()
+            expected_b=1
             for line in code:
-                mnemonics=LineParser(line.strip()).get_instruction().as_mnemonic()
+                parsed_line=LineParser(line.strip())
+                parsed_line.check_b(expected_b)
+                mnemonics=parsed_line.get_instruction().as_mnemonic()
                 for mnemonic in mnemonics:
                     if mnemonic:
                         asm_code.append_tabbed_line(mnemonic)
+                expected_b+=1
             self.compiler.write_assembler_code(asm_code)
             
             

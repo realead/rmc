@@ -47,4 +47,8 @@ class LineParser:
             raise RMCError("b must be a positive integer, found "+b_literal)
         self.b=int(b_literal)
         if not self.b:
-            raise RMCError("b must be a positive integer, found "+b_literal)  
+            raise RMCError("b must be a positive integer, found "+b_literal) 
+            
+    def check_b(self, expected_b):
+        if expected_b!=self.b:
+            raise RMCError("expected b is {0}, found b is {1}".format(expected_b, self.b))  
