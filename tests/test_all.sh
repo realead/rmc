@@ -4,6 +4,9 @@
 TEST_CASE=${1:-all}
 KEEP=$2
 
+### paths for all testing scripts
+export RMC="python2.7 ../../src/rmc.py"
+export TOOLS="../tools"
 
 ######## RUN ###################
 
