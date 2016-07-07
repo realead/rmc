@@ -12,10 +12,12 @@ import argparse
 parser = argparse.ArgumentParser(description='Register Machine Compiler')
 parser.add_argument('-c', type=str,
                     help='file name of the file to compile')
-parser.add_argument('-o', type=str, 
+parser.add_argument('-o', type=str, default="out.a",
                     help='file name of the resulting program')
-parser.add_argument('-v', 
+parser.add_argument('-v', action='store_true',
                     help='verbosity flag')
+parser.add_argument('-s', action='store_true',
+                    help='only compiling')
                                         
 args = parser.parse_args()
 
@@ -42,6 +44,11 @@ except RMCError as e:
     exit(1)
 
 
+
+if args.s:
+    exit(0)
+
+#only if -s not set!
 
 #assembly runtime:
 command_list=[];
