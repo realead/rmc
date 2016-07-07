@@ -6,6 +6,9 @@ __pycache__/
 #backup files:
 *~
 
+#object files:
+*.o
+
 # C extensions
 *.so
 
