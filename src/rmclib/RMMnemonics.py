@@ -111,15 +111,27 @@ class Mult:
  
  
 class Sub:
+    sub_cnt=0
     def __init__(self, operands):
+        #getting unique id used for the jump
+        self.sub_id=Sub.sub_cnt
+        Sub.sub_cnt+=1
         if len(operands)!=1:
            raise RMCError("SUB expects exact 1 operand but {0} found".format(len(operands)))
         self.operand=createOperand(operands[0])
              
     def as_AMD64Mnemonics(self):
         res=[]
+        label_normal="sub{0}_jmp_label".format(self.sub_id)
+        label_end="sub{0}_jmp_label_end".format(self.sub_id)     
         res.extend(self.operand.prepare_AMD64Mnemonics())
+        res.append("cmpq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
+        res.append("ja "+label_normal) #jump to then branch
+        res.append("movq\t $0, %rax") # else branch
+        res.append("jmp "+label_end)  #jump over the then branch
+        res.append(label_normal+":")
         res.append("subq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
+        res.append(label_end+":")
         return res   
                 
 #operation factory        
