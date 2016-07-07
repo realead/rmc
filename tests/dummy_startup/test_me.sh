@@ -66,6 +66,10 @@ check_prog_return "12 4 3a" "2" #input error - not a number
 check_prog_return "1 18446744073709551616" "3"  addition_overlow #input error - overflow during addition
 check_prog_return "1 184467440737095516140" "3" mult_overflow #input error - overflow during multiplication
 
+check_prog_return "" "4" no_arguments
+check_prog_return "0" "5" zero_cells
+check_prog_return "1 4 5" "6" more_inizialized_then_cells
+
 
 
 ############# CLEAN UP ######################################

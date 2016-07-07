@@ -21,6 +21,7 @@
 #Attention: no error handling yet!
 
 .include "linux64.h"
+.include "error_codes.h"
 
 .section .bss
     .equ BUFFER_SIZE, 500
@@ -33,14 +34,28 @@
     .equ ST_REG_N, 2*QUAD_SIZE
 _start:
     movq %rsp, %rbp
-    
-    #number of RM-registers
+
+check_n_given:
+    cmpq $2, ST_ARGC(%rbp) 
+    jl no_n_given
+      
+    #number of RM-registers is given
     movq ST_REG_N(%rbp), %rdi
     call atouq
     
-#put 0-initialized values on stack 
+check_nonzero_n:    
+    cmpq $0, %rax
+    je zero_cells_error
+    
+#put 0-initialized values on stack
+    addq $2, %rax #because first two arguments are the name of the program and the number of registers, we assume there will be no overflow:)
+
+#check_ini_cnt
+    cmpq ST_ARGC(%rbp), %rax
+    jl too_many_ini_cells
+    
+    #keep the number of 0-initialized cells in rax:    
     subq ST_ARGC(%rbp), %rax
-    addq $2, %rax #because first two arguments are the name of the program and the number of registers
     
 fill_stack:
     cmp $0, %rax
@@ -97,5 +112,16 @@ start_program:
     movq  $0, %rdi
     syscall
     
+zero_cells_error:
+    movq $ERROR_ZERO_CELLS, %rdi
+    call error_exit #there is no comming back  
+      
+no_n_given:
+    movq $ERROR_NO_N_REG, %rdi
+    call error_exit #there is no comming back 
     
+too_many_ini_cells:
+    movq $ERROR_TOO_MANY_ARGUMENTS, %rdi
+    call error_exit #there is no comming back 
+       
     
