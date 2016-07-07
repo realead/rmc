@@ -13,13 +13,13 @@
 import AMD64Mnemonics
 from rmcerrors import RMCError 
 
-class LineParserException(Exception):
-    pass
+
+
     
 class LineParser:
     def __init__(self, line):
         parts=line.split()
-        self.b_value=int(parts[0])
+        self.parse_b(parts[0])
         self.operation=parts[1]
         self.operand=parts[2]
         
@@ -40,5 +40,11 @@ class LineParser:
         if self.operation=="LOAD":
            return AMD64Mnemonics.Operation2("movq", self.get_operand(), AMD64Mnemonics.Accumulator())
            
-        raise RMCError("unknown instruction "+self.operation);   
-        
+        raise RMCError("unknown instruction "+self.operation); 
+          
+    def parse_b(self, b_literal):
+        if not b_literal.isdigit():
+            raise RMCError("b must be a positive integer, found "+b_literal)
+        self.b=int(b_literal)
+        if not self.b:
+            raise RMCError("b must be a positive integer, found "+b_literal)  
