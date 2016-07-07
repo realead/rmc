@@ -33,6 +33,10 @@ class AMD64Compiler:
         code.append_tabbed_line('.globl\t{0}'.format(mangled_fun_name))
         code.append_tabbed_line('.type\t{0}, @function'.format(mangled_fun_name))
         code.append_code_line('{0}:'.format(mangled_fun_name))
+        
+        #setting up the enviroment
+        code.append_tabbed_line('movq\tREGS, %rdi')
+        code.append_tabbed_line('movq\t$0, %rax')
         self.write_assembler_code(code)
          
         #inner_part
@@ -49,8 +53,7 @@ class AMD64Compiler:
        
        
             
-    def emit_main(self):
-        inner_code=AssemblerCode()   
+    def emit_main(self, inner_code):   
         self.register_global_function("rmprogram", inner_code)
         
         
