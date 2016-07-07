@@ -1,0 +1,5 @@
+1 ADD #5
+2 ADD 0
+3 ADD *1
+4 STORE 0
+5 END

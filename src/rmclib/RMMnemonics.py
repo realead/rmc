@@ -84,7 +84,19 @@ class Load:
         res.append("movq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
         return res    
         
+class Add:
+    def __init__(self, operands):
+        if len(operands)!=1:
+           raise RMCError("ADD expects exact 1 operand but {0} found".format(len(operands)))
+        self.operand=createOperand(operands[0])
+             
+    def as_AMD64Mnemonics(self):
+        res=[]
+        res.extend(self.operand.prepare_AMD64Mnemonics())
+        res.append("addq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
+        return res   
         
+                
 #operation factory        
 def createOperation(tokens):
     if not tokens:
@@ -96,6 +108,8 @@ def createOperation(tokens):
     if operation == "STORE":
         return Store(operands)
     if operation == "LOAD":
-        return Load(operands)   
+        return Load(operands) 
+    if operation == "ADD":
+        return Add(operands)   
         
     raise RMCError("unknown instruction "+operation);             
