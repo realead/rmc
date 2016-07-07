@@ -5,8 +5,25 @@ build(){
 }
 
 
+
 failed_cnt=0 #if everything ok return 0 - no example failed
 all_cnt=0
+
+
+#1. argument -> file to compile, also test case name
+#2. expected error message
+only_compile(){
+    NAME=$1
+    EXPECTED="error compiling $NAME.rm: $2"
+    #capturing only the stderr
+    ERROR_MESSAGE=$($RMC -s "-c" "$NAME.rm" 2>&1 1>/dev/null)
+    if [ "$ERROR_MESSAGE" != "$EXPECTED" ]; then  
+        echo "TC $NAME, output is wrong: received [$ERROR_MESSAGE] vs. expected [$EXPECTED]"
+        failed_cnt=$((failed_cnt+1))
+    fi
+    all_cnt=$((all_cnt+1))
+}
+
 
 # first parameter - command line arguments
 # second parameter - expected program output
