@@ -63,7 +63,7 @@ class Store:
            raise RMCError("STORE expects exact 1 operand but {0} found".format(len(operands)))
         self.operand=createOperand(operands[0])
         if isinstance(self.operand, Constant):
-            raise RMCError("Cannot store into a constand, need register or register reference")
+            raise RMCError("cannot store into a constant, need register or register reference")
              
     def as_AMD64Mnemonics(self):
         res=[]
