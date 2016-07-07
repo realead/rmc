@@ -10,12 +10,15 @@ export TOOLS="../tools"
 
 ######## RUN ###################
 
+error_cnt=0
+
 #$1 directory
 #$2 whether to keep
 test_case(){
      cd "$1"
      echo "Test $1:"
      sh test_me.sh $KEEP
+     error_cnt=$(($error_cnt+$?))
      cd ..
 }
 
@@ -30,4 +33,11 @@ else
    test_case $TEST_CASE
 fi 
 
+if [ $error_cnt != "0" ]; then
+    echo "\nTHERE WERE $error_cnt ERRORS\n"
+    return 1
+else
+    echo "\nall tests were ok\n"
+    return 0
+fi
 
