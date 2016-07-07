@@ -1,22 +1,12 @@
 #################  SETUP  ######################################
 RMRT_PATH="../../src/rmrt"
+TOOLS="../tools"
 PROG="prog"
 
 ##################  BUILD #####################################
 
-RMRT_SOURCES=$(ls $RMRT_PATH/*.s)
-
-for source in $RMRT_SOURCES
-do
-  base=$(basename $source ".s")
-  as -I$RMRT_PATH $source -o $base.o
-done
-
-as program.s -o program.o
-OBJECTS=$(ls *.o)
-
-ld $OBJECTS -o $PROG
-
+sh $RMRT_PATH/build_rmrt.sh "." 
+sh $TOOLS/compile_and_link_all.sh $PROG 
 
 ############### RUN AND CHECK ################################
 
@@ -26,23 +16,16 @@ failed_cnt=0 #if everything ok return 0 - no example failed
 # second parameter - expected program output
 # third parameter (optional) - test case name
 check_prog_output(){
-    rec=$(./$PROG $1)
-    if [ "$rec" != "$2" ]; then  
-      echo "TC $3, output is wrong: received [$rec] vs. expected [$2]"
-      failed_cnt=$((failed_cnt+1))
-    fi
+    sh $TOOLS/check_output.sh ./$PROG "$1" "$2" "$3"
+    failed_cnt=$((failed_cnt+$?))
 }
 
 # first parameter - command line arguments
 # second parameter - expected program return value
 # third parameter (optional) - test case name
 check_prog_return(){
-    ./$PROG $1 > /dev/null
-    rec=$?
-    if [ "$rec"  != "$2" ]; then  
-      echo "TC $3, return value is wrong: received [$rec] vs. expected [$2]"
-      failed_cnt=$((failed_cnt+1))
-    fi
+    sh $TOOLS/check_status.sh ./$PROG "$1" "$2" "$3"
+    failed_cnt=$((failed_cnt+$?))
 }
 
 # here are the test cases for program output:
