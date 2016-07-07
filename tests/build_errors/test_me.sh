@@ -45,6 +45,9 @@ only_compile "ADD/two_operands"               "ADD expects exact 1 operand but 2
 only_compile "MULT/no_operands"                "MULT expects exact 1 operand but 0 found"
 only_compile "MULT/two_operands"               "MULT expects exact 1 operand but 2 found"
 
+only_compile "SUB/no_operands"                "SUB expects exact 1 operand but 0 found"
+only_compile "SUB/two_operands"               "SUB expects exact 1 operand but 2 found"
+
 ########### CLEAN UP #################################################
 
 if [ "$1" != "--keep" ]; then

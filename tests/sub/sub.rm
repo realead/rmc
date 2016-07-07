@@ -1,0 +1,6 @@
+1 LOAD #100
+2 SUB #5
+3 SUB 0
+4 SUB *1
+5 STORE 0
+6 END

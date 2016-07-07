@@ -108,6 +108,19 @@ class Mult:
         res.extend(self.operand.prepare_AMD64Mnemonics())
         res.append("imulq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
         return res         
+ 
+ 
+class Sub:
+    def __init__(self, operands):
+        if len(operands)!=1:
+           raise RMCError("SUB expects exact 1 operand but {0} found".format(len(operands)))
+        self.operand=createOperand(operands[0])
+             
+    def as_AMD64Mnemonics(self):
+        res=[]
+        res.extend(self.operand.prepare_AMD64Mnemonics())
+        res.append("subq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
+        return res   
                 
 #operation factory        
 def createOperation(tokens):
@@ -124,6 +137,8 @@ def createOperation(tokens):
     if operation == "ADD":
         return Add(operands) 
     if operation == "MULT":
-        return Mult(operands)   
+        return Mult(operands) 
+    if operation == "SUB":
+        return Sub(operands)   
         
     raise RMCError("unknown instruction "+operation);             
