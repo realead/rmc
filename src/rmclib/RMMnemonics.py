@@ -214,7 +214,28 @@ class Goto:
     def get_needed_line_labels(self):
         return [self.label.label_id]
  
+
+
+class Jzero:
+    def __init__(self, operands):
+        if len(operands)!=1:
+           raise RMCError("JZERO expects exact 1 operand but {0} found".format(len(operands)))
+        const_val=createOperand(operands[0])
+        if not isinstance(const_val, Constant):
+            raise RMCError("JZERO label must be a const, but is "+operands[0])
+        if const_val.get_value()<=0:
+            raise RMCError("JZERO label must positive, but is {0}".format(const_val.get_value()))
+            
+        self.label=Label(const_val.get_value())    
+        
+             
+    def as_AMD64Mnemonics(self):
+        return ["cmpq $0, %rax", "je\t"+self.label.as_reference()]
+        
+    def get_needed_line_labels(self):
+        return [self.label.label_id]
  
+  
  
                 
 #operation factory        
@@ -238,6 +259,8 @@ def createOperation(tokens):
     if operation == "DIV":
         return Div(operands) 
     if operation == "GOTO":
-        return Goto(operands)   
+        return Goto(operands) 
+    if operation == "JZERO":
+        return Jzero(operands)  
         
     raise RMCError("unknown instruction "+operation);             

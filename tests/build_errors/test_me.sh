@@ -57,7 +57,17 @@ only_compile "GOTO/two_operands"                "GOTO expects exact 1 operand bu
 only_compile "GOTO/goto0"                       "GOTO label must positive, but is 0"
 only_compile "GOTO/goto_index"                  "GOTO label must be a const, but is 0"
 only_compile "GOTO/goto_ref"                    "GOTO label must be a const, but is *0"
-only_compile "GOTO/unknown_label"               "unknown GOTO label 100, there are only 2 lines"
+only_compile "GOTO/unknown_label"               "unknown GOTO/JZERO label 100, there are only 2 lines"
+
+
+
+
+only_compile "JZERO/no_operands"                 "JZERO expects exact 1 operand but 0 found"
+only_compile "JZERO/two_operands"                "JZERO expects exact 1 operand but 2 found"
+only_compile "JZERO/jzero0"                       "JZERO label must positive, but is 0"
+only_compile "JZERO/jzero_index"                  "JZERO label must be a const, but is 0"
+only_compile "JZERO/jzero_ref"                    "JZERO label must be a const, but is *0"
+only_compile "JZERO/unknown_label"               "unknown GOTO/JZERO label 100, there are only 2 lines"
 
 ########### CLEAN UP #################################################
 
