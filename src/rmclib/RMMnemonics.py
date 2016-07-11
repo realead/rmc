@@ -1,13 +1,28 @@
 from rmcerrors import RMCError
 import rmcerrors
 
-
- #OPERANDS:
+#Label:
+class Label:
+    def __init__(self, label_id, label_format="line{0}"):
+        self.label_id=label_id
+        self.label=label_format.format(self.label_id)
+    
+    def as_AMD64Mnemonics(self):
+        return [self.label+":"]
+        
+    def as_reference(self):
+        return self.label
+        
+        
+#OPERANDS:
         
 class Constant:
     def __init__(self, constant_literal):
         self.constant=rmcerrors.asNonnegInt(constant_literal, lit_name="constant")
     
+    def  get_value(self):
+        return self.constant
+        
     def prepare_AMD64Mnemonics(self):
         return []
         
@@ -56,7 +71,11 @@ class End:
     def as_AMD64Mnemonics(self):
         return ["jmp end_program"]
 
-
+    def get_needed_line_labels(self):
+        return []
+        
+        
+        
 class Store:
     def __init__(self, operands):
         if len(operands)!=1:
@@ -70,7 +89,11 @@ class Store:
         res.extend(self.operand.prepare_AMD64Mnemonics())
         res.append("movq\t%rax, "+self.operand.as_AMD64Mnemonics())
         return res
-        
+    
+    def get_needed_line_labels(self):
+        return []
+                
+
 
 class Load:
     def __init__(self, operands):
@@ -82,7 +105,10 @@ class Load:
         res=[]
         res.extend(self.operand.prepare_AMD64Mnemonics())
         res.append("movq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
-        return res    
+        return res 
+        
+    def get_needed_line_labels(self):
+        return []   
         
 class Add:
     def __init__(self, operands):
@@ -96,6 +122,10 @@ class Add:
         res.append("addq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
         return res   
 
+    def get_needed_line_labels(self):
+        return []
+        
+        
         
 class Mult:
     def __init__(self, operands):
@@ -107,8 +137,12 @@ class Mult:
         res=[]
         res.extend(self.operand.prepare_AMD64Mnemonics())
         res.append("imulq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
-        return res         
- 
+        return res   
+              
+    def get_needed_line_labels(self):
+        return [] 
+        
+        
  
 class Sub:
     sub_cnt=0
@@ -133,7 +167,12 @@ class Sub:
         res.append("subq\t"+self.operand.as_AMD64Mnemonics()+", %rax")
         res.append(label_end+":")
         return res   
-
+     
+    def get_needed_line_labels(self):
+        return []
+        
+        
+        
 
 class Div:
     def __init__(self, operands):
@@ -149,6 +188,31 @@ class Div:
         res.append("divq\t%rbx")#rax<-rax/rbx
         return res  
 
+    def get_needed_line_labels(self):
+        return []
+
+
+
+
+
+class Goto:
+    def __init__(self, operands):
+        if len(operands)!=1:
+           raise RMCError("GOTO expects exact 1 operand but {0} found".format(len(operands)))
+        const_val=createOperand(operands[0])
+        if not isinstance(const_val, Constant):
+            raise RMCError("label must be a const, but is "+operands[0])
+        self.label=Label(const_val.get_value())    
+        
+             
+    def as_AMD64Mnemonics(self):
+        return ["jmp\t"+self.label.as_reference()]
+        
+    def get_needed_line_labels(self):
+        return [self.label.label_id]
+ 
+ 
+ 
                 
 #operation factory        
 def createOperation(tokens):
@@ -169,6 +233,8 @@ def createOperation(tokens):
     if operation == "SUB":
         return Sub(operands) 
     if operation == "DIV":
-        return Div(operands)   
+        return Div(operands) 
+    if operation == "GOTO":
+        return Goto(operands)   
         
     raise RMCError("unknown instruction "+operation);             

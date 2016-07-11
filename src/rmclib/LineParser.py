@@ -35,7 +35,9 @@ class LineParser:
     def check_b(self, expected_b):
         if expected_b!=self.b:
             raise RMCError("expected b is {0}, found b is {1}".format(expected_b, self.b))  
-            
+    
+    def get_needed_line_labels(self):
+        return self.operation.get_needed_line_labels()        
             
     def add_to_end_list(self, list_of_ends):
         if self.is_end:

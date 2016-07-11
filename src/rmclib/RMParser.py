@@ -1,6 +1,7 @@
 from ascode import AssemblerCode
 from LineParser import LineParser
 from rmcerrors import RMCError
+import RMMnemonics as rms
 
 class RMParser:
     def __init__(self, input_file):
@@ -17,23 +18,32 @@ class RMParser:
         if isinstance(code, AssemblerCode):
             self.compiler.write_assembler_code(code)
         else:
-            asm_code=AssemblerCode()
             expected_b=1
             lines_of_end=[]
+            compiled_code_lines=[]
+            needed_line_labels=set()
             for line in code:
                 parsed_line=LineParser(line.strip())
                 parsed_line.check_b(expected_b)
                 parsed_line.add_to_end_list(lines_of_end)
-                    
-                mnemonics=parsed_line.as_AMD64Mnemonics()
-                for mnemonic in mnemonics:
-                    if mnemonic:
-                        asm_code.append_tabbed_line(mnemonic)
+                needed_line_labels.update(parsed_line.get_needed_line_labels())  
+                compiled_code_lines.append(parsed_line.as_AMD64Mnemonics())
                 expected_b+=1
                 
             #check whether there is an END instruction
             if len(lines_of_end)!=1:
                 raise RMCError("exact one END instruction expected, but {0} found".format(len(lines_of_end)))
+            
+            #put it into the assembler code:
+            asm_code=AssemblerCode()
+            for (b_,mnemonics) in enumerate(compiled_code_lines):
+                b=b_+1
+                if b in needed_line_labels:
+                    label=rms.Label(b)
+                    mnemonics=label.as_AMD64Mnemonics()+mnemonics
+                for mnemonic in mnemonics:
+                    if mnemonic:
+                        asm_code.append_tabbed_line(mnemonic)
             
                 
             self.compiler.write_assembler_code(asm_code)
