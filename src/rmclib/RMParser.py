@@ -34,6 +34,8 @@ class RMParser:
             if len(lines_of_end)!=1:
                 raise RMCError("exact one END instruction expected, but {0} found".format(len(lines_of_end)))
             
+            if needed_line_labels and max(needed_line_labels)>len(compiled_code_lines):
+                raise RMCError("unknown GOTO label {0}, there are only {1} lines".format(max(needed_line_labels), len(compiled_code_lines)))
             #put it into the assembler code:
             asm_code=AssemblerCode()
             for (b_,mnemonics) in enumerate(compiled_code_lines):

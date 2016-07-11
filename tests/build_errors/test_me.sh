@@ -51,6 +51,14 @@ only_compile "SUB/two_operands"               "SUB expects exact 1 operand but 2
 only_compile "DIV/no_operands"                "DIV expects exact 1 operand but 0 found"
 only_compile "DIV/two_operands"               "DIV expects exact 1 operand but 2 found"
 
+
+only_compile "GOTO/no_operands"                 "GOTO expects exact 1 operand but 0 found"
+only_compile "GOTO/two_operands"                "GOTO expects exact 1 operand but 2 found"
+only_compile "GOTO/goto0"                       "GOTO label must positive, but is 0"
+only_compile "GOTO/goto_index"                  "GOTO label must be a const, but is 0"
+only_compile "GOTO/goto_ref"                    "GOTO label must be a const, but is *0"
+only_compile "GOTO/unknown_label"               "unknown GOTO label 100, there are only 2 lines"
+
 ########### CLEAN UP #################################################
 
 if [ "$1" != "--keep" ]; then

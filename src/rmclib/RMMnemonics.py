@@ -201,7 +201,10 @@ class Goto:
            raise RMCError("GOTO expects exact 1 operand but {0} found".format(len(operands)))
         const_val=createOperand(operands[0])
         if not isinstance(const_val, Constant):
-            raise RMCError("label must be a const, but is "+operands[0])
+            raise RMCError("GOTO label must be a const, but is "+operands[0])
+        if const_val.get_value()<=0:
+            raise RMCError("GOTO label must positive, but is {0}".format(const_val.get_value()))
+            
         self.label=Label(const_val.get_value())    
         
              
