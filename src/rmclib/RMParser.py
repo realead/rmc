@@ -11,11 +11,10 @@ class RMParser:
         self.compiler=compiler
         self.compiler.parser=self
         self.compiler.emit_main(self.lines)
-        self.compiler.close_output()#make sure the file is flushed
  
     def parse(self, code):
         if isinstance(code, AssemblerCode):
-            self.compiler.write_assembler_code(code)
+            self.compiler.add_assembler_code(code)
         else:
             expected_b=1
             lines_of_end=[]
@@ -47,7 +46,7 @@ class RMParser:
                         asm_code.append_tabbed_line(mnemonic)
             
                 
-            self.compiler.write_assembler_code(asm_code)
+            self.compiler.add_assembler_code(asm_code)
             
             
             

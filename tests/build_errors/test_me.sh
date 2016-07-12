@@ -69,16 +69,26 @@ only_compile "JZERO/jzero_index"                  "JZERO label must be a const, 
 only_compile "JZERO/jzero_ref"                    "JZERO label must be a const, but is *0"
 only_compile "JZERO/unknown_label"               "unknown GOTO/JZERO label 100, there are only 2 lines"
 
-########### CLEAN UP #################################################
+########### CLEAN UP ##################################################
+# just in case something went wront and there are s-Files:
+delete_s(){
+    for file in *.s
+    do
+         if [ -f $file ];  then
+            rm $file
+         fi
+    done
+
+}
 
 if [ "$1" != "--keep" ]; then
-    rm *.s
+    delete_s
     #clean up in subdirs:
     for dir in *
     do
         if [ -d $dir ]; then
             cd $dir
-            rm *.s
+            delete_s
             cd ..
         fi
     done

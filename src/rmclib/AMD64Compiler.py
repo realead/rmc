@@ -6,18 +6,16 @@ class AMD64CompilerException(Exception):
 
 
 class AMD64Compiler:
-    def __init__(self, output_file, input_file, parser=None):
+    def __init__(self, input_file, parser=None):
         #needed counters:
         self.mangled_funs=set()
         
         self.parser=parser
+        self.assembler=AssemblerCode()
         
-        self.out=open(output_file, 'w')
-        self.out.write('\t.file\t"{0}"\n'.format(input_file))
-        self.out.write('\t.text\n')
-    
-    def write_assembler_code(self, assembler_code):
-        assembler_code.write_to_file(self.out)
+        self.assembler.append_tabbed_line('.file\t"{0}"'.format(input_file))
+        self.assembler.append_tabbed_line('.text')
+        
         
             
     def register_global_function(self, mangled_fun_name, fun_body):
@@ -29,40 +27,31 @@ class AMD64Compiler:
         self.mangled_funs.add(mangled_fun_name)
         
         #prolog:
-        code=AssemblerCode()
-        code.append_tabbed_line('.globl\t{0}'.format(mangled_fun_name))
-        code.append_tabbed_line('.type\t{0}, @function'.format(mangled_fun_name))
-        code.append_code_line('{0}:'.format(mangled_fun_name))
+        self.assembler.append_tabbed_line('.globl\t{0}'.format(mangled_fun_name))
+        self.assembler.append_tabbed_line('.type\t{0}, @function'.format(mangled_fun_name))
+        self.assembler.append_code_line('{0}:'.format(mangled_fun_name))
         
         #setting up the enviroment
-        code.append_tabbed_line('movq\tREGS, %rdi')
-        code.append_tabbed_line('movq\t$0, %rax')
-        self.write_assembler_code(code)
+        self.assembler.append_tabbed_line('movq\tREGS, %rdi')
+        self.assembler.append_tabbed_line('movq\t$0, %rax')
          
         #inner_part
         
 	    #code of the function	
         self.parser.parse(fun_body)
 
-        code=AssemblerCode()
-        code.append_code_line('end_program:')
-        code.append_tabbed_line('ret')
-        
-        #flush to the file:
-        self.write_assembler_code(code)
-       
-       
-       
+        self.assembler.append_code_line('end_program:')
+        self.assembler.append_tabbed_line('ret')
+             
             
     def emit_main(self, inner_code):   
         self.register_global_function("rmprogram", inner_code)
         
         
+    def add_assembler_code(self, code):
+        self.assembler.extend_code(code)    
         
+    def write_assembler_code_to_file(self, output_file_name):
+        with open(output_file_name, "w") as f:
+            self.assembler.write_to_file(f)
         
-    def close_output(self):
-        self.out.close()
-        
-
-
-	

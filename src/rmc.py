@@ -32,13 +32,12 @@ obj_file=path+".o"
 from rmclib.RMParser import RMParser as Parser
 from rmclib.AMD64Compiler import AMD64Compiler as Compiler
 
-parser=Parser(args.c)
-compiler=Compiler(asm_file, input_name, parser)
-
-
 from rmclib.rmcerrors import RMCError 
 try:
+    parser=Parser(args.c)
+    compiler=Compiler(input_name, parser)
     parser.compile_file(compiler)
+    compiler.write_assembler_code_to_file(asm_file)
 except RMCError as e:
     print >> sys.stderr, "error compiling "+args.c+":", e
     exit(1)
