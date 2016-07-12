@@ -19,6 +19,7 @@ from rmcerrors import RMCError
 class LineParser:
     def __init__(self, line):
         self.is_end=False
+        self.line_label_needed=False
         parts=line.split()
         self.parse_b(parts[0])
         self.operation=rms.createOperation(parts[1:])
@@ -26,7 +27,12 @@ class LineParser:
                 
         
     def as_AMD64Mnemonics(self):
-        return self.operation.as_AMD64Mnemonics()
+        res=[]
+        if self.line_label_needed:
+            label=rms.Label(self.b)
+            res.extend(label.as_AMD64Mnemonics())
+        res.extend(self.operation.as_AMD64Mnemonics())
+        return res
         
           
     def parse_b(self, b_literal):
@@ -36,6 +42,11 @@ class LineParser:
         if expected_b!=self.b:
             raise RMCError("expected b is {0}, found b is {1}".format(expected_b, self.b))  
     
+    
+    def set_line_label_as_needed(self):
+        self.line_label_needed=True
+        
+        
     def get_needed_line_labels(self):
         return self.operation.get_needed_line_labels()        
             
