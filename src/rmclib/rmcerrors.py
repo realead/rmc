@@ -2,10 +2,13 @@
 class RMCError(Exception):
     def __init__(self, message):
         Exception.__init__(self, message)
-        self.line_number=None
+        self.__line_number=None
         
     def set_line_number(self, new_line_number):
-        self.line_number=new_line_number
+        self.__line_number=new_line_number
+    
+    def get_line_number(self):
+        return self.__line_number
         
     
     

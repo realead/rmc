@@ -39,10 +39,11 @@ try:
     parser.compile_file(compiler)
     compiler.write_assembler_code_to_file(asm_file)
 except RMCError as e:
-    if e.line_number is None:
+    line_number=e.get_line_number()
+    if line_number is None:
         print >> sys.stderr, "error compiling {0}: {1}".format(args.c, e)
     else :
-        print >> sys.stderr, "error compiling {0} in line {1}: {2}".format(args.c, e.line_number, e)
+        print >> sys.stderr, "error compiling {0} in line {1}: {2}".format(args.c, line_number, e)
     exit(1)
 
 
