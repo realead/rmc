@@ -12,9 +12,16 @@ all_cnt=0
 
 #1. argument -> file to compile, also test case name
 #2. expected error message
+#3. expected error line
 only_compile(){
     NAME=$1
-    EXPECTED="error compiling $NAME.rm: $2"
+    if [ -z ${3+x} ]; then 
+        #line is unset
+        EXPECTED="error compiling $NAME.rm: $2"
+    else
+        #line number is set 
+        EXPECTED="error compiling $NAME.rm in line $3: $2"
+    fi
     #capturing only the stderr
     ERROR_MESSAGE=$($RMC -s "-c" "$NAME.rm" 2>&1 1>/dev/null)
     if [ "$ERROR_MESSAGE" != "$EXPECTED" ]; then  
