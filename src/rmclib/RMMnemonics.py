@@ -62,7 +62,8 @@ def createOperand(var_literal):
     return Register(var_literal) 
      
         
-#OPERATIONS        
+#OPERATIONS 
+       
 class End:
     def __init__(self, operands):
         if operands:
@@ -74,13 +75,15 @@ class End:
     def get_needed_line_labels(self):
         return []
         
-        
-        
-class Store:
-    def __init__(self, operands):
+class Operation:
+    def __init__(self, operands, name="UNKNOWN"):
         if len(operands)!=1:
-           raise RMCError("STORE expects exact 1 operand but {0} found".format(len(operands)))
-        self.operand=createOperand(operands[0])
+           raise RMCError("{0} expects exact 1 operand but {1} found".format(name, len(operands)))
+        self.operand=createOperand(operands[0])            
+        
+class Store(Operation):
+    def __init__(self, operands):
+        Operation.__init__(self, operands, "STORE")
         if isinstance(self.operand, Constant):
             raise RMCError("cannot store into a constant, need register or register reference")
              
@@ -95,11 +98,9 @@ class Store:
                 
 
 
-class Load:
-    def __init__(self, operands):
-        if len(operands)!=1:
-           raise RMCError("LOAD expects exact 1 operand but {0} found".format(len(operands)))
-        self.operand=createOperand(operands[0])
+class Load(Operation):
+    def __init__(self, operands):  
+        Operation.__init__(self, operands, "LOAD")
              
     def as_AMD64Mnemonics(self):
         res=[]
@@ -110,11 +111,9 @@ class Load:
     def get_needed_line_labels(self):
         return []   
         
-class Add:
+class Add(Operation):
     def __init__(self, operands):
-        if len(operands)!=1:
-           raise RMCError("ADD expects exact 1 operand but {0} found".format(len(operands)))
-        self.operand=createOperand(operands[0])
+        Operation.__init__(self, operands, "ADD")
              
     def as_AMD64Mnemonics(self):
         res=[]
@@ -127,11 +126,9 @@ class Add:
         
         
         
-class Mult:
-    def __init__(self, operands):
-        if len(operands)!=1:
-           raise RMCError("MULT expects exact 1 operand but {0} found".format(len(operands)))
-        self.operand=createOperand(operands[0])
+class Mult(Operation):
+    def __init__(self, operands):  
+        Operation.__init__(self, operands, "MULT")
              
     def as_AMD64Mnemonics(self):
         res=[]
@@ -144,15 +141,13 @@ class Mult:
         
         
  
-class Sub:
+class Sub(Operation):
     sub_cnt=0
-    def __init__(self, operands):
+    def __init__(self, operands): 
+        Operation.__init__(self, operands, "SUB")
         #getting unique id used for the jump
         self.sub_id=Sub.sub_cnt
         Sub.sub_cnt+=1
-        if len(operands)!=1:
-           raise RMCError("SUB expects exact 1 operand but {0} found".format(len(operands)))
-        self.operand=createOperand(operands[0])
              
     def as_AMD64Mnemonics(self):
         res=[]
@@ -174,11 +169,9 @@ class Sub:
         
         
 
-class Div:
+class Div(Operation):
     def __init__(self, operands):
-        if len(operands)!=1:
-           raise RMCError("DIV expects exact 1 operand but {0} found".format(len(operands)))
-        self.operand=createOperand(operands[0])
+        Operation.__init__(self, operands, "DIV")
              
     def as_AMD64Mnemonics(self):
         res=[]
@@ -194,19 +187,20 @@ class Div:
 
 
 
-
-class Goto:
-    def __init__(self, operands):
+class Jump:
+    def __init__(self, operands, name="UNKNOWN"):
         if len(operands)!=1:
-           raise RMCError("GOTO expects exact 1 operand but {0} found".format(len(operands)))
-        const_val=createOperand(operands[0])
+           raise RMCError("{0} expects exact 1 operand but {1} found".format(name, len(operands)))
+        const_val=createOperand(operands[0])  
         if not isinstance(const_val, Constant):
-            raise RMCError("GOTO label must be a const, but is "+operands[0])
+            raise RMCError(name+" label must be a const, but is "+operands[0])
         if const_val.get_value()<=0:
-            raise RMCError("GOTO label must positive, but is {0}".format(const_val.get_value()))
-            
-        self.label=Label(const_val.get_value())    
-        
+            raise RMCError(name+" label must positive, but is {0}".format(const_val.get_value()))      
+        self.label=Label(const_val.get_value())  
+
+class Goto(Jump):
+    def __init__(self, operands):
+        Jump.__init__(self, operands, "GOTO")           
              
     def as_AMD64Mnemonics(self):
         return ["jmp\t"+self.label.as_reference()]
@@ -216,17 +210,9 @@ class Goto:
  
 
 
-class Jzero:
-    def __init__(self, operands):
-        if len(operands)!=1:
-           raise RMCError("JZERO expects exact 1 operand but {0} found".format(len(operands)))
-        const_val=createOperand(operands[0])
-        if not isinstance(const_val, Constant):
-            raise RMCError("JZERO label must be a const, but is "+operands[0])
-        if const_val.get_value()<=0:
-            raise RMCError("JZERO label must positive, but is {0}".format(const_val.get_value()))
-            
-        self.label=Label(const_val.get_value())    
+class Jzero(Jump):
+    def __init__(self, operands):  
+        Jump.__init__(self, operands, "JZERO")    
         
              
     def as_AMD64Mnemonics(self):
