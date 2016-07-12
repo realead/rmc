@@ -223,30 +223,21 @@ class Jzero(Jump):
  
   
  
-                
+
+MnemonicDictionary={"END":End, "STORE":Store, 
+                    "LOAD":Load, "ADD":Add, 
+                    "MULT":Mult, "SUB":Sub, 
+                    "DIV":Div, "GOTO":Goto,
+                    "JZERO":Jzero}                
 #operation factory        
 def createOperation(tokens):
     if not tokens:
         raise RMCError("operation expected, but none found")
     operation=tokens[0]
     operands=tokens[1:] 
-    if operation == "END":
-        return End(operands)
-    if operation == "STORE":
-        return Store(operands)
-    if operation == "LOAD":
-        return Load(operands) 
-    if operation == "ADD":
-        return Add(operands) 
-    if operation == "MULT":
-        return Mult(operands) 
-    if operation == "SUB":
-        return Sub(operands) 
-    if operation == "DIV":
-        return Div(operands) 
-    if operation == "GOTO":
-        return Goto(operands) 
-    if operation == "JZERO":
-        return Jzero(operands)  
+    if operation not in MnemonicDictionary:
+        raise RMCError("unknown instruction "+operation)
         
-    raise RMCError("unknown instruction "+operation);             
+    return MnemonicDictionary[operation](operands)  
+    
+                   
