@@ -28,6 +28,9 @@ class Constant:
         
     def as_AMD64Mnemonics(self):
         return "${0}".format(self.constant)
+
+    def interpret(self, rmstate):
+        return self.constant
         
              
 class Register:
@@ -39,6 +42,12 @@ class Register:
            
     def as_AMD64Mnemonics(self):
         return "(%rdi, %rcx, 8)"#pointer to the registers is in %rdi
+
+    def interpret(self, rmstate):
+        return rmstate.REGS[self.index]
+
+    def interpret_as_ref(self, rmstate):
+        return self.index
         
 class Reference:
     def __init__(self, index_literal):
@@ -50,6 +59,13 @@ class Reference:
            
     def as_AMD64Mnemonics(self):
         return "(%rdi, %rcx, 8)"
+
+    def interpret(self, rmstate):
+        return rmstate.REGS[rmstate.REGS[self.index]]
+
+    def interpret_as_ref(self, rmstate):
+        return rmstate.REGS[self.index]
+
 
 #operand factory        
 def createOperand(var_literal):
@@ -74,6 +90,10 @@ class End:
 
     def get_needed_line_labels(self):
         return []
+
+    def interpret(self, rmstate):
+        rmstate.ended = True
+
         
 class Operation:
     def __init__(self, operands, name="UNKNOWN"):
@@ -95,6 +115,10 @@ class Store(Operation):
     
     def get_needed_line_labels(self):
         return []
+
+    def interpret(self, rmstate):
+        index = self.operand.interpret_as_ref(rmstate)
+        rmstate.REGS[index] = rmstate.acc 
                 
 
 
@@ -110,6 +134,10 @@ class Load(Operation):
         
     def get_needed_line_labels(self):
         return []   
+
+    def interpret(self, rmstate):
+        rmstate.acc = self.operand.interpret(rmstate)
+
         
 class Add(Operation):
     def __init__(self, operands):
@@ -124,7 +152,8 @@ class Add(Operation):
     def get_needed_line_labels(self):
         return []
         
-        
+    def interpret(self, rmstate):
+        rmstate.acc += self.operand.interpret(rmstate)        
         
 class Mult(Operation):
     def __init__(self, operands):  
@@ -139,6 +168,8 @@ class Mult(Operation):
     def get_needed_line_labels(self):
         return [] 
         
+    def interpret(self, rmstate):
+        rmstate.acc *= self.operand.interpret(rmstate)         
         
  
 class Sub(Operation):
@@ -166,7 +197,9 @@ class Sub(Operation):
     def get_needed_line_labels(self):
         return []
         
-        
+    def interpret(self, rmstate):
+        rmstate.acc -= min(rmstate.acc, self.operand.interpret(rmstate)) #result cannot be negative 
+           
         
 
 class Div(Operation):
@@ -183,8 +216,9 @@ class Div(Operation):
 
     def get_needed_line_labels(self):
         return []
-
-
+       
+    def interpret(self, rmstate):
+        rmstate.acc //= self.operand.interpret(rmstate) 
 
 
 class Jump:
@@ -204,7 +238,10 @@ class Goto(Jump):
              
     def as_AMD64Mnemonics(self):
         return ["jmp\t"+self.label.as_reference()]
-        
+
+    def interpret(self, rmstate):
+        rmstate.b=self.label.label_id-1#-1=>account for automatical b+1 in every step
+       
     def get_needed_line_labels(self):
         return [self.label.label_id]
  
@@ -213,10 +250,13 @@ class Goto(Jump):
 class Jzero(Jump):
     def __init__(self, operands):  
         Jump.__init__(self, operands, "JZERO")    
-        
-             
+                 
     def as_AMD64Mnemonics(self):
         return ["cmpq $0, %rax", "je\t"+self.label.as_reference()]
+
+    def interpret(self, rmstate):
+        if rmstate.acc==0:
+            rmstate.b=self.label.label_id-1#-1=>account for automatical b+1 in every step
         
     def get_needed_line_labels(self):
         return [self.label.label_id]

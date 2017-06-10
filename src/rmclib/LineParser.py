@@ -33,8 +33,10 @@ class LineParser:
             res.extend(label.as_AMD64Mnemonics())
         res.extend(self.operation.as_AMD64Mnemonics())
         return res
-        
-          
+
+    def interpret(self, rmstate):
+        self.operation.interpret(rmstate)
+                
     def parse_b(self, b_literal):
         self.b=rmcerrors.asNonnegInt(b_literal, must_be_positive=True, lit_name="b")
             
