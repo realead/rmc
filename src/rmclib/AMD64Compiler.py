@@ -50,7 +50,8 @@ class AMD64Compiler:
         #inner_part
         
 	    #code of the function	
-        self.parser.parse(fun_body)
+        parsed_lines, needed_line_labels=self.parser.parse(fun_body)
+        self.add_assembler_code(self.compile_lines(parsed_lines, needed_line_labels))
 
         self.assembler.append_code_line('end_program:')
         self.assembler.append_tabbed_line('ret')

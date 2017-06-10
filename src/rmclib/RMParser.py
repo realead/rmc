@@ -40,8 +40,7 @@ class RMParser:
                 raise RMCError("unknown GOTO/JZERO label {0}, there are only {1} lines".format(max(needed_line_labels), len(parsed_lines)))
 
         
-                
-            self.compiler.add_assembler_code(self.compiler.compile_lines(parsed_lines, needed_line_labels))
+            return (parsed_lines, needed_line_labels)   
             
             
             
