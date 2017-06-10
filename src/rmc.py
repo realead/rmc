@@ -35,9 +35,10 @@ from rmclib.AMD64Compiler import AMD64Compiler as Compiler
 from rmclib.rmcerrors import RMCError 
 try:
     parser=Parser(args.c)
-    compiler=Compiler(input_name, parser)
+    parsed_lines, needed_line_labels = parser.parse()
 
-    compiler.emit_main(parser.lines)
+    compiler=Compiler(input_name)
+    compiler.emit_main(parsed_lines, needed_line_labels)
 
     compiler.write_assembler_code_to_file(asm_file)
 except RMCError as e:

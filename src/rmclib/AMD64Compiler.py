@@ -6,11 +6,10 @@ class AMD64CompilerException(Exception):
 
 
 class AMD64Compiler:
-    def __init__(self, input_file, parser=None):
+    def __init__(self, input_file):
         #needed counters:
         self.mangled_funs=set()
         
-        self.parser=parser
         self.assembler=AssemblerCode()
         
         self.assembler.append_tabbed_line('.file\t"{0}"'.format(input_file))
@@ -30,7 +29,7 @@ class AMD64Compiler:
         return asm_code
 
          
-    def register_global_function(self, mangled_fun_name, fun_body):
+    def register_global_function(self, mangled_fun_name, parsed_lines, needed_line_labels):
         if mangled_fun_name in self.mangled_funs:
             raise AMD64CompilerException("redefinition of function "+mangled_fun_name)
         
@@ -50,15 +49,14 @@ class AMD64Compiler:
         #inner_part
         
 	    #code of the function	
-        parsed_lines, needed_line_labels=self.parser.parse(fun_body)
         self.add_assembler_code(self.compile_lines(parsed_lines, needed_line_labels))
 
         self.assembler.append_code_line('end_program:')
         self.assembler.append_tabbed_line('ret')
              
            
-    def emit_main(self, inner_code):   
-        self.register_global_function("rmprogram", inner_code)
+    def emit_main(self, parsed_lines, needed_line_labels):   
+        self.register_global_function("rmprogram", parsed_lines, needed_line_labels)
         
         
     def add_assembler_code(self, code):

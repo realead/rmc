@@ -7,12 +7,12 @@ class RMParser:
         with open(input_file,'r') as cin:
             self.lines=cin.readlines()
  
-    def parse(self, code):
+    def parse(self):
         expected_b=1
         lines_of_end=[]
         parsed_lines=[]
         needed_line_labels=set()
-        for number, line in enumerate(code):
+        for number, line in enumerate(self.lines):
             try:
                 parsed_line=LineParser(line.strip())
                 parsed_line.check_b(expected_b)
