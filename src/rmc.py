@@ -34,7 +34,9 @@ from rmclib.AMD64Compiler import AMD64Compiler as Compiler
 
 from rmclib.rmcerrors import RMCError 
 try:
-    parser=Parser(args.c)
+    with open(args.c,'r') as cin:
+            rmprogram=cin.readlines()
+    parser=Parser(rmprogram)
     parsed_lines, needed_line_labels = parser.parse()
 
     compiler=Compiler(input_name)

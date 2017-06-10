@@ -3,9 +3,8 @@ from LineParser import LineParser
 from rmcerrors import RMCError
 
 class RMParser:
-    def __init__(self, input_file):
-        with open(input_file,'r') as cin:
-            self.lines=cin.readlines()
+    def __init__(self, rmprogram):
+        self.lines=rmprogram
  
     def parse(self):
         expected_b=1
