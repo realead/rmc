@@ -17,7 +17,19 @@ class AMD64Compiler:
         self.assembler.append_tabbed_line('.text')
         
         
-            
+    def compile_lines(self, parsed_lines, needed_line_labels):
+        asm_code=AssemblerCode()
+        for (b_, parsed_line) in enumerate(parsed_lines):
+            b=b_+1
+            if b in needed_line_labels:
+                parsed_line.set_line_label_as_needed()
+            mnemonics=parsed_line.as_AMD64Mnemonics()
+            for mnemonic in mnemonics:
+                if mnemonic:
+                    asm_code.append_tabbed_line(mnemonic)
+        return asm_code
+
+         
     def register_global_function(self, mangled_fun_name, fun_body):
         if mangled_fun_name in self.mangled_funs:
             raise AMD64CompilerException("redefinition of function "+mangled_fun_name)
@@ -43,7 +55,7 @@ class AMD64Compiler:
         self.assembler.append_code_line('end_program:')
         self.assembler.append_tabbed_line('ret')
              
-            
+           
     def emit_main(self, inner_code):   
         self.register_global_function("rmprogram", inner_code)
         

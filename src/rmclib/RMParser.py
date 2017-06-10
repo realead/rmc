@@ -38,19 +38,10 @@ class RMParser:
             
             if needed_line_labels and max(needed_line_labels)>len(parsed_lines):
                 raise RMCError("unknown GOTO/JZERO label {0}, there are only {1} lines".format(max(needed_line_labels), len(parsed_lines)))
-            #put it into the assembler code:
-            asm_code=AssemblerCode()
-            for (b_, parsed_line) in enumerate(parsed_lines):
-                b=b_+1
-                if b in needed_line_labels:
-                    parsed_line.set_line_label_as_needed()
-                mnemonics=parsed_line.as_AMD64Mnemonics()
-                for mnemonic in mnemonics:
-                    if mnemonic:
-                        asm_code.append_tabbed_line(mnemonic)
-            
+
+        
                 
-            self.compiler.add_assembler_code(asm_code)
+            self.compiler.add_assembler_code(self.compiler.compile_lines(parsed_lines, needed_line_labels))
             
             
             
