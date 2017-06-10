@@ -36,7 +36,9 @@ from rmclib.rmcerrors import RMCError
 try:
     parser=Parser(args.c)
     compiler=Compiler(input_name, parser)
-    parser.compile_file(compiler)
+
+    compiler.emit_main(parser.lines)
+
     compiler.write_assembler_code_to_file(asm_file)
 except RMCError as e:
     line_number=e.get_line_number()
