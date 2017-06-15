@@ -25,7 +25,7 @@ parser.add_argument("-v", action="store_true",
 args = parser.parse_args()
 
 nREG = args.n
-iniVals =  map(int, args.i.split())
+iniVals =  map(int, args.i.split()) if args.i is not None else []
 
 if len(iniVals)>nREG:
    print >> sys.stderr, "error in set up: there are more initial values than registers\n"

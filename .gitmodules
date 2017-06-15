@@ -1,0 +1,3 @@
+[submodule "tests/exetest"]
+	path = tests/exetest
+	url = https://github.com/realead/exetest

@@ -25,7 +25,7 @@ test_case(){
 
 if [ $TEST_CASE = "all"  ]; then
     for d in *; do
-        if [ -d "$d" ] && [ $d != "tools" ]; then
+        if [ -d "$d" ] && [ $d != "tools" ] && [ $d != "exetest" ]; then
              test_case $d
         fi
     done
