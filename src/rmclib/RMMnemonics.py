@@ -1,6 +1,9 @@
 from rmcerrors import RMCError
 import rmcerrors
 
+#TODO make different modes for interpreter
+MAX_REGISTER_VALUE=2**64
+
 #Label:
 class Label:
     def __init__(self, label_id, label_format="line{0}"):
@@ -153,7 +156,8 @@ class Add(Operation):
         return []
         
     def interpret(self, rmstate):
-        rmstate.acc += self.operand.interpret(rmstate)        
+        rmstate.acc += self.operand.interpret(rmstate)   
+        rmstate.acc %= MAX_REGISTER_VALUE     
         
 class Mult(Operation):
     def __init__(self, operands):  
