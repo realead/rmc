@@ -173,7 +173,8 @@ class Mult(Operation):
         return [] 
         
     def interpret(self, rmstate):
-        rmstate.acc *= self.operand.interpret(rmstate)         
+        rmstate.acc *= self.operand.interpret(rmstate)
+        rmstate.acc %= MAX_REGISTER_VALUE         
         
  
 class Sub(Operation):
