@@ -26,6 +26,7 @@ input_name=os.path.basename(args.c)
 path, ext=os.path.splitext(args.c)
 asm_file=path+".s"
 obj_file=path+".o"
+target_path=os.path.dirname(obj_file)
 
 
 #compile rmprogram
@@ -62,7 +63,7 @@ if args.s:
 command_list=[];
 rt_files=["atouq", "error_exit", "print_newline", "startup", "uqtoa"]
 for rt_file in rt_files:
-    command_list.append(['as', "-I"+path_to_rt, os.path.join(path_to_rt, rt_file)+".s", '-o', rt_file+".o"])
+    command_list.append(['as', "-I"+path_to_rt, os.path.join(path_to_rt, rt_file)+".s", '-o', os.path.join(target_path, rt_file+".o")])
     
 
 
@@ -70,7 +71,8 @@ for rt_file in rt_files:
 command_list.append(['as', asm_file, '-o', obj_file])
 
 #link everything
-command_list.append(['ld', '-o', args.o, obj_file]+[f+'.o' for f in rt_files])
+command_list.append(['ld', '-o', args.o, obj_file]+[os.path.join(target_path, f+".o") for f in rt_files])
+
 
 
 #invoke the program:
