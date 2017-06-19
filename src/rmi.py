@@ -14,22 +14,38 @@ parser = argparse.ArgumentParser(description='Register Machine Interpreter')
 
 parser.add_argument('-f',  type=str, 
                     help="file with the register machine program which should be interpreted")
-parser.add_argument('-n', type=int,
+parser.add_argument('-n', type=str, default=None,
                     help='number of registers')
 parser.add_argument('-i', type=str, 
                     help='space separated list of initial values of the registers')
 parser.add_argument("-v", action="store_true",
                     help='verbosity flag')
 
-                                        
+
 args = parser.parse_args()
 
-nREG = args.n
-iniVals =  map(int, args.i.split()) if args.i is not None else []
+if args.n is None:
+    exit(4)
+
+try:
+    nREG = int(args.n)
+except:
+    exit(2)#not a number
+
+if nREG<0:
+    exit(2)#not a number, the same as rmc-result
+
+if nREG==0:
+    exit(5)#no registers
+
+try:
+    iniVals =  map(int, args.i.split()) if args.i is not None else []
+except:
+    exit(2)#not a number
+
 
 if len(iniVals)>nREG:
-   print >> sys.stderr, "error in set up: there are more initial values than registers\n"
-   exit(1)    
+   exit(6)    
 
 
 REGS=iniVals+[0]*(nREG-len(iniVals))
