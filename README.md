@@ -104,7 +104,8 @@ Other examples can be seen in folder *tests*.
    1. Run `sh unit_test.sh` for running all tests
    2. Run `sh unit_test.sh rmc` for running only for `rmc.py`
    3. Run `sh unit_test.sh rmi` for running only for `rmi.py`
-   3. Run `sh unit_test.sh rmi XXX` for running only tests for `rmi.py` from the test-subfolder `XXX` 
+   4. Run `sh unit_test.sh rmi XXX` for running only tests for `rmi.py` from the test-subfolder `XXX` 
+   5. Run `sh unit_test.sh all . --keep` for running all tests and keeping temporary files (results of `rmc.py`-run)
  
 ### How rmc works    
 Similar to C-runtime, there is a Register Machine runtime - boilerplate code which interprets the command line arguments and sets the initial values of the registers. After the preparation the runtime calls rmprogram - a function written by the rm-compiler. 

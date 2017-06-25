@@ -6,6 +6,10 @@ fi
 
 TESTCASE=${2:-.}
 
+if [ "$3" = "--keep" ]; then
+    export KEEP="YES"
+fi
+
 
 export PYTHONPATH="${PYTHONPATH}:exetest:."
 export RMI=../src/rmi.py

@@ -35,14 +35,20 @@ class RMCTester:
 
 
     def tearDown(self):#kind of the check, that the build-step delivered it right
-        os.remove(os.path.join(self.my_path, self.EXE_NAME))
-        os.remove(os.path.join(self.my_path, self.program_name+".o"))
-        os.remove(os.path.join(self.my_path, self.program_name+".s"))
-        os.remove(os.path.join(self.my_path, "atouq.o"))
-        os.remove(os.path.join(self.my_path, "print_newline.o"))
-        os.remove(os.path.join(self.my_path, "startup.o"))
-        os.remove(os.path.join(self.my_path, "error_exit.o"))
-        os.remove(os.path.join(self.my_path, "uqtoa.o"))
+        try:
+            keep_temps = os.environ["KEEP"]
+        except:
+            keep_temps = "NO"
+
+        if keep_temps != "YES":
+            os.remove(os.path.join(self.my_path, self.EXE_NAME))
+            os.remove(os.path.join(self.my_path, self.program_name+".o"))
+            os.remove(os.path.join(self.my_path, self.program_name+".s"))
+            os.remove(os.path.join(self.my_path, "atouq.o"))
+            os.remove(os.path.join(self.my_path, "print_newline.o"))
+            os.remove(os.path.join(self.my_path, "startup.o"))
+            os.remove(os.path.join(self.my_path, "error_exit.o"))
+            os.remove(os.path.join(self.my_path, "uqtoa.o"))
 
 
 
