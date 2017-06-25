@@ -18,7 +18,14 @@ class Label:
         
         
 #OPERANDS:
-        
+
+def encode64bit(z):
+    res=''
+    for i in xrange(8):
+            res+=chr(z%256)
+            z/=256;
+    return res
+    
 class Constant:
     def __init__(self, constant_literal):
         self.constant=rmcerrors.asNonnegInt(constant_literal, lit_name="constant")
@@ -31,6 +38,11 @@ class Constant:
         
     def as_AMD64Mnemonics(self):
         return "${0}".format(self.constant)
+
+    def to_rdx_in_x86_64_opcode(self):
+        #as 64bit unsigned integer (don't try to make it 32 bit)
+        #movabs $constant, %rdx
+        return b'\x48\xba'+encode64bit(self.constant)
 
     def interpret(self, rmstate):
         return self.constant
@@ -46,6 +58,17 @@ class Register:
     def as_AMD64Mnemonics(self):
         return "(%rdi, %rcx, 8)"#pointer to the registers is in %rdi
 
+    def to_rdx_in_x86_64_opcode(self):
+        res=b'\x48\xb9'+encode64bit(self.index) #movabs $index, %rcx
+        res+=b'\x48\x8b\x14\xcf'                #mov (%rdi, %rcx, 8), %rdx
+        return res  
+                                 
+
+    def from_rdx_in_x86_64_opcode(self):
+        res=b'\x48\xb9'+encode64bit(self.index) #movabs $index, %rcx
+        res+=b'\x48\x89\x14\xcf' #mov %rdx, (%rdi, %rcx, 8) 
+        return res 
+     
     def interpret(self, rmstate):
         return rmstate.REGS[self.index]
 
@@ -97,12 +120,16 @@ class End:
     def interpret(self, rmstate):
         rmstate.ended = True
 
+    def as_x86_64_opcode(self):
+        return b'\xc3' #ret
+
         
 class Operation:
     def __init__(self, operands, name="UNKNOWN"):
         if len(operands)!=1:
            raise RMCError("{0} expects exact 1 operand but {1} found".format(name, len(operands)))
-        self.operand=createOperand(operands[0])            
+        self.operand=createOperand(operands[0])    
+        
         
 class Store(Operation):
     def __init__(self, operands):
@@ -122,7 +149,11 @@ class Store(Operation):
     def interpret(self, rmstate):
         index = self.operand.interpret_as_ref(rmstate)
         rmstate.REGS[index] = rmstate.acc 
-                
+
+    def as_x86_64_opcode(self):
+        res=b'\x48\x89\xc2'                             # mov %rax, %rdx
+        res+= self.operand.from_rdx_in_x86_64_opcode()  # move from %rdx to operand
+        return res 
 
 
 class Load(Operation):
@@ -141,7 +172,14 @@ class Load(Operation):
     def interpret(self, rmstate):
         rmstate.acc = self.operand.interpret(rmstate)
 
-        
+    def as_x86_64_opcode(self):
+        res=self.operand.to_rdx_in_x86_64_opcode()  # move operand to %rdx
+        res+=b'\x48\x89\xd0'                        # mov %rdx, %rax
+        return res
+               
+
+
+    
 class Add(Operation):
     def __init__(self, operands):
         Operation.__init__(self, operands, "ADD")

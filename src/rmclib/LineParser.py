@@ -36,6 +36,9 @@ class LineParser:
 
     def interpret(self, rmstate):
         self.operation.interpret(rmstate)
+
+    def as_x86_64_opcode(self):
+        return self.operation.as_x86_64_opcode()
                 
     def parse_b(self, b_literal):
         self.b=rmcerrors.asNonnegInt(b_literal, must_be_positive=True, lit_name="b")
