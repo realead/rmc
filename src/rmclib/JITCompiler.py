@@ -49,11 +49,23 @@ def call_as_jit_code(code, registers):
 
 
 def jitcompile(parsed_lines):
+
     code=[b'\x48\xc7\xc0\x00\x00\x00\x00'] # mov $0, %rax
     
+
     #first sweep, placeholder for jumps:
+    line_start_adresses=[]
+    placeholders = {}
+    cur_position=len(code[0])
     for line in parsed_lines:
-        code+=line.as_x86_64_opcode()
+        line_start_adresses.append(cur_position)
+        #returns code, mat local_index_of_opcode->goal of the jump
+        opcode, placeholder=line.as_x86_64_opcode()
+        if placeholder is not None:
+            #local to global index
+            placeholders[placeholder[0]+len(code)]=placeholder[1]
+        cur_position+=sum([len(x) for x in opcode])
+        code.extend(opcode)
     
 
     return code
