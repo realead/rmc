@@ -223,7 +223,12 @@ class Mult(Operation):
         
     def interpret(self, rmstate):
         rmstate.acc *= self.operand.interpret(rmstate)
-        rmstate.acc %= MAX_REGISTER_VALUE         
+        rmstate.acc %= MAX_REGISTER_VALUE 
+
+    def as_x86_64_opcode(self):
+        res=self.operand.to_rdx_in_x86_64_opcode()  # move operand to %rdx
+        res+=b'\x48\x0f\xaf\xc2'                    #multq %rdx, %rbx
+        return ([res], None)          
         
  
 class Sub(Operation):
