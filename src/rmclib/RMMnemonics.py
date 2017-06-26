@@ -92,6 +92,12 @@ class Reference:
     def interpret_as_ref(self, rmstate):
         return rmstate.REGS[self.index]
 
+    def to_rdx_in_x86_64_opcode(self):
+        res=b'\x48\xb9'+encode64bit(self.index) #movabs $index, %rcx
+        res+=b'\x48\x8b\x0c\xcf'                #mov (%rdi, %rcx, 8), %rcx
+        res+=b'\x48\x8b\x14\xcf'                #mov (%rdi, %rcx, 8), %rdx
+        return res 
+
 
 #operand factory        
 def createOperand(var_literal):
@@ -195,7 +201,12 @@ class Add(Operation):
         
     def interpret(self, rmstate):
         rmstate.acc += self.operand.interpret(rmstate)   
-        rmstate.acc %= MAX_REGISTER_VALUE     
+        rmstate.acc %= MAX_REGISTER_VALUE 
+
+    def as_x86_64_opcode(self):
+        res=self.operand.to_rdx_in_x86_64_opcode()  # move operand to %rdx
+        res+=b'\x48\x01\xd0'                        # add %rdx, %rax
+        return ([res], None)    
         
 class Mult(Operation):
     def __init__(self, operands):  
