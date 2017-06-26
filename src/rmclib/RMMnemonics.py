@@ -273,6 +273,15 @@ class Div(Operation):
        
     def interpret(self, rmstate):
         rmstate.acc //= self.operand.interpret(rmstate) 
+    
+    def as_x86_64_opcode(self):
+        res=self.operand.to_rdx_in_x86_64_opcode()  # move operand to %rdx
+        res+=b'\x48\x89\xd3'                        #mov %rdx, %rbx
+        res+=b'\x31\xd2'                            #xor %edx, %edx
+        res+=b'\x48\xf7\xf3'                         #divq %rbx
+        return ([res], None)  
+
+
 
 
 class Jump:
