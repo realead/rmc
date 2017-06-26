@@ -63,7 +63,6 @@ class Register:
         res+=b'\x48\x8b\x14\xcf'                #mov (%rdi, %rcx, 8), %rdx
         return res  
                                  
-
     def from_rdx_in_x86_64_opcode(self):
         res=b'\x48\xb9'+encode64bit(self.index) #movabs $index, %rcx
         res+=b'\x48\x89\x14\xcf' #mov %rdx, (%rdi, %rcx, 8) 
@@ -97,6 +96,12 @@ class Reference:
         res+=b'\x48\x8b\x0c\xcf'                #mov (%rdi, %rcx, 8), %rcx
         res+=b'\x48\x8b\x14\xcf'                #mov (%rdi, %rcx, 8), %rdx
         return res 
+
+    def from_rdx_in_x86_64_opcode(self):
+        res=b'\x48\xb9'+encode64bit(self.index) #movabs $index, %rcx
+        res+=b'\x48\x8b\x0c\xcf'                #mov (%rdi, %rcx, 8), %rcx -> real address
+        res+=b'\x48\x89\x14\xcf'                #mov %rdx, (%rdi, %rcx, 8) 
+        return res
 
 
 #operand factory        
