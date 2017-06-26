@@ -49,13 +49,13 @@ def call_as_jit_code(code, registers):
 
 
 def jitcompile(parsed_lines):
-    code=b'\x48\xc7\xc0\x00\x00\x00\x00' # mov $0, %rax
+    code=[b'\x48\xc7\xc0\x00\x00\x00\x00'] # mov $0, %rax
     
     #first sweep, placeholder for jumps:
     for line in parsed_lines:
         code+=line.as_x86_64_opcode()
     
-    #code='\x48\x89\x07\xc3'
+
     return code
 
 
@@ -68,7 +68,7 @@ def jitrun(REGS, parsed_lines, dump_file_name=None):
             f.write(code)
 
    arr = array.array('L', REGS);
-   call_as_jit_code(code, arr)
+   call_as_jit_code(''.join(code), arr)
    return arr[0]
 
 

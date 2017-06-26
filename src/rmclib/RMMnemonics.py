@@ -121,7 +121,7 @@ class End:
         rmstate.ended = True
 
     def as_x86_64_opcode(self):
-        return b'\xc3' #ret
+        return [b'\xc3'] #ret
 
         
 class Operation:
@@ -153,7 +153,7 @@ class Store(Operation):
     def as_x86_64_opcode(self):
         res=b'\x48\x89\xc2'                             # mov %rax, %rdx
         res+= self.operand.from_rdx_in_x86_64_opcode()  # move from %rdx to operand
-        return res 
+        return [res] 
 
 
 class Load(Operation):
@@ -175,7 +175,7 @@ class Load(Operation):
     def as_x86_64_opcode(self):
         res=self.operand.to_rdx_in_x86_64_opcode()  # move operand to %rdx
         res+=b'\x48\x89\xd0'                        # mov %rdx, %rax
-        return res
+        return [res]
                
 
 
