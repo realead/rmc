@@ -66,11 +66,10 @@ def jitcompile(parsed_lines):
     
 
     #first sweep, placeholder for jumps:
-    line_start_adresses=[]
+    line_start_adresses=[0]
     placeholders = {}
     cur_position=len(code[0])
     for line_id, line in enumerate(parsed_lines):
-        line_start_adresses.append(cur_position)#there is a sentinel at the end
         #returns code, mat local_index_of_opcode->goal of the jump
         opcode, placeholder=line.as_x86_64_opcode()
         if placeholder is not None:
@@ -78,6 +77,7 @@ def jitcompile(parsed_lines):
             placeholders[placeholder[0]+len(code)]=(line_id, placeholder[1])
         cur_position+=sum([len(x) for x in opcode])
         code.extend(opcode)
+        line_start_adresses.append(cur_position)#there is a sentinel at the end
     
     #link (replace placeholders with jump widths:
     for code_index, info in placeholders.items():
