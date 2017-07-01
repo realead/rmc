@@ -263,7 +263,16 @@ class Sub(Operation):
         
     def interpret(self, rmstate):
         rmstate.acc -= min(rmstate.acc, self.operand.interpret(rmstate)) #result cannot be negative 
-           
+    
+    def as_x86_64_opcode(self):
+        res=self.operand.to_rdx_in_x86_64_opcode()  # move operand to %rdx
+        res+=b'\x48\x39\xd0'                    #cmp %rdx, %rax
+        res+=b'\x77\x05'                        #jump short if above +5 (rdx<rax)
+        res+=b'\x48\x31\xc0'                        #xor %rax, %rax
+        res+=b'\xeb\x03'                        #jump short (+3)
+        res+=b'\x48\x29\xd0'                    #sub %rdx, %rax
+        #res+=b'\x90'                            #nop as end of (subroutine)
+        return ([res], None)          
         
 
 class Div(Operation):
