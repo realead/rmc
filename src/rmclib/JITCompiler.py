@@ -3,6 +3,18 @@ import ctypes
 import mmap
 import array
 
+import rmcerrors
+
+def encodeInt32(z):
+    if z<-2**31 or z>=2**31:
+        raise RMCError("not a 32bit integer")
+    z=(z+2**32)%(2**32) #as 32bit unsigned int
+    res=''
+    for i in xrange(4):
+            res+=chr(z%256)
+            z/=256;
+    return res
+
 # Equivalent to dlopen(NULL) to open the main process; this means the Python
 # interpreter, which links the C library in. Alternatively, we could open
 # libc.so.6 directly (for Linux).
@@ -57,17 +69,20 @@ def jitcompile(parsed_lines):
     line_start_adresses=[]
     placeholders = {}
     cur_position=len(code[0])
-    for line in parsed_lines:
-        line_start_adresses.append(cur_position)
+    for line_id, line in enumerate(parsed_lines):
+        line_start_adresses.append(cur_position)#there is a sentinel at the end
         #returns code, mat local_index_of_opcode->goal of the jump
         opcode, placeholder=line.as_x86_64_opcode()
         if placeholder is not None:
             #local to global index
-            placeholders[placeholder[0]+len(code)]=placeholder[1]
+            placeholders[placeholder[0]+len(code)]=(line_id, placeholder[1])
         cur_position+=sum([len(x) for x in opcode])
         code.extend(opcode)
     
-
+    #link (replace placeholders with jump widths:
+    for code_index, info in placeholders.items():
+        diff=line_start_adresses[info[1]-1]-line_start_adresses[info[0]+1]
+        code[code_index]=encodeInt32(diff)
     return code
 
 
@@ -75,9 +90,10 @@ def jitrun(REGS, parsed_lines, dump_file_name=None):
    
    code = jitcompile(parsed_lines)
    
+
    if dump_file_name is not None:
         with open(dump_file_name, 'wb') as f:
-            f.write(code)
+            f.write(''.join(code))
 
    arr = array.array('L', REGS);
    call_as_jit_code(''.join(code), arr)

@@ -318,7 +318,9 @@ class Goto(Jump):
     def get_needed_line_labels(self):
         return [self.label.label_id]
  
-
+    def as_x86_64_opcode(self):
+        #         jmp        placeholder        element it replace with label
+        return (['\xe9', '\x00\x00\x00\x00'],  (1, self.label.label_id)) 
 
 class Jzero(Jump):
     def __init__(self, operands):  
