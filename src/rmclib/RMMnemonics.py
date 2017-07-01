@@ -328,7 +328,7 @@ class Goto(Jump):
         return [self.label.label_id]
  
     def as_x86_64_opcode(self):
-        #         jmp        placeholder        element it replace with label
+        #         jmp near  placeholder        element it replaces with label
         return (['\xe9', '\x00\x00\x00\x00'],  (1, self.label.label_id)) 
 
 class Jzero(Jump):
@@ -344,8 +344,12 @@ class Jzero(Jump):
         
     def get_needed_line_labels(self):
         return [self.label.label_id]
+
+    def as_x86_64_opcode(self):
+        res=b'\x48\x83\xf8\x00'     #cmp $0,%rax
+        #             je near        placeholder        element it replaces with label
+        return ([res+'\x0F\x84', '\x00\x00\x00\x00'],  (1, self.label.label_id)) 
  
-  
  
 
 MnemonicDictionary={"END":End, "STORE":Store, 
