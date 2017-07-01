@@ -13,7 +13,7 @@ A framework for register machine language.
 This framework consists of
    1. compiler `rmc.py`. RMC is a register machine compiler, i.e. it compiles register machine code. Right now, the only supported target is **x86_64 linux architecture**.
    2. interpreter `rmi.py`. The interpreter RMI can be used on any operating system with python. 
-   3. jit-compiler `rmjit.py`(future)
+   3. jit-compiler `rmjit.py`. Right now, the only supported target is **x86_64 linux architecture**.
 
 The syntax and model of the register machine is closely related to the register machine described in *Alexander Asteroth, Christel Baier, Theoretische Informatik, Eine Einführung in Berechenbarkeit, Komplexität
 und formale Sprachen mit 101 Beispielen*.
@@ -82,6 +82,10 @@ und formale Sprachen mit 101 Beispielen*.
 #### rmi (interpreter)
 
   1. run `python2.7 rmi.py -f code.rm -n 7 -i "2 4"` for interpreting the program `code.rm`, the option `-n` reserves the registers for the program (in this case 7), the option `-i` sets the initial values of these reserved register, in this case `[2,4,0,0,0,0,0]` (if not explicitly stated, registers are initialized to 0).
+
+#### rmjit (jit-compiler)
+
+  1. run `python2.7 rmjit.py -f code.rm -n 7 -i "2 4"` for interpreting the program `code.rm`, the option `-n` reserves the registers for the program (in this case 7), the option `-i` sets the initial values of these reserved register, in this case `[2,4,0,0,0,0,0]` (if not explicitly stated, registers are initialized to 0).
    
 ### Example
 
@@ -104,8 +108,13 @@ Other examples can be seen in folder *tests*.
    1. Run `sh unit_test.sh` for running all tests
    2. Run `sh unit_test.sh rmc` for running only for `rmc.py`
    3. Run `sh unit_test.sh rmi` for running only for `rmi.py`
+   3. Run `sh unit_test.sh rmjit` for running only for `rmjit.py`
    4. Run `sh unit_test.sh rmi XXX` for running only tests for `rmi.py` from the test-subfolder `XXX` 
    5. Run `sh unit_test.sh all . --keep` for running all tests and keeping temporary files (results of `rmc.py`-run)
+
+### Times
+
+For comparison on your system, run `sh time_test.sh` in the *tests/time_test*  folder. On my system `rmjit` is about `3%` slower than `rmc` compiled code and about `200` times faster than the intepreter `rmi`.
  
 ### How rmc works    
 Similar to C-runtime, there is a Register Machine runtime - boilerplate code which interprets the command line arguments and sets the initial values of the registers. After the preparation the runtime calls rmprogram - a function written by the rm-compiler. 
